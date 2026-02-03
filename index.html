@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>&lt;model-viewer&gt; template</title>
+    <meta charset="utf-8">
+    <meta name="description" content="&lt;model-viewer&gt; template">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="./styles.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <!-- <model-viewer> HTML element -->
+    <model-viewer src="방열판 렌더링 4010-5010.gltf" ar ar-modes="webxr scene-viewer quick-look" camera-controls tone-mapping="neutral" poster="poster.webp" shadow-intensity="1" _mstvisible="11" shadow-softness="0">
+      <div class="progress-bar hide" slot="progress-bar" _mstvisible="12">
+          <div class="update-bar" _mstvisible="13"></div>
+      </div>
+      <button slot="ar-button" id="ar-button" _msttexthash="61135269" _msthash="45" _mstvisible="12"> 당신의 공간에서 보기 </button>
+      <div id="ar-prompt" _mstvisible="12">
+          <img src="ar_hand_prompt.png" _mstvisible="13">
+      </div>
+    </model-viewer>  
+    <script src="script.js"></script>
+    <!-- Loads <model-viewer> for browsers: -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+  </body>
+</html>
