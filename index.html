@@ -1,25 +1,145 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <title>&lt;model-viewer&gt; template</title>
-    <meta charset="utf-8">
-    <meta name="description" content="&lt;model-viewer&gt; template">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link type="text/css" href="./styles.css" rel="stylesheet"/>
-  </head>
-  <body>
-    <!-- <model-viewer> HTML element -->
-    <model-viewer src="sample_2.gltf" ar ar-modes="webxr scene-viewer quick-look" camera-controls tone-mapping="neutral" poster="poster.webp" shadow-intensity="1" _mstvisible="11" shadow-softness="0">
-      <div class="progress-bar hide" slot="progress-bar" _mstvisible="12">
-          <div class="update-bar" _mstvisible="13"></div>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GRINMAX 3D Viewer</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f1115;
+      --card:#1a1d24;
+      --line:rgba(255,255,255,.10);
+      --txt:rgba(255,255,255,.92);
+      --sub:rgba(255,255,255,.62);
+      --btn:#2a2f3b;
+      --btnOn:#3a4152;
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px;}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:0 10px 40px rgba(0,0,0,.35);
+    }
+    header{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:12px;}
+    .title{font-size:16px;font-weight:700;letter-spacing:.2px}
+    .desc{font-size:12px;color:var(--sub);margin-top:4px}
+    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    button{
+      border:1px solid var(--line);
+      background:var(--btn);
+      color:var(--txt);
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    button:hover{background:var(--btnOn)}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);}
+    .hint{font-size:12px;color:var(--sub)}
+    .viewer{position:relative}
+    model-viewer{
+      width:100%;
+      height:min(72vh,720px);
+      background:radial-gradient(1200px 700px at 50% 30%, rgba(255,255,255,.07), rgba(255,255,255,0));
+    }
+    .badge{
+      position:absolute;left:12px;top:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(255,255,255,.9);
+      padding:6px 10px;border-radius:999px;
+      font-size:12px;backdrop-filter: blur(6px);
+    }
+    .status{
+      position:absolute;right:12px;bottom:12px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.12);
+      padding:6px 10px;border-radius:999px;
+      font-size:12px;color:rgba(255,255,255,.85);
+      backdrop-filter: blur(6px);
+    }
+    .foot{padding:12px;font-size:12px;color:var(--sub)}
+    a{color:rgba(255,255,255,.85)}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <div class="title">3D 제품 뷰어</div>
+        <div class="desc">드래그: 회전 · 휠/핀치: 확대 · 우클릭/두손: 이동</div>
       </div>
-      <button slot="ar-button" id="ar-button" _msttexthash="61135269" _msthash="45" _mstvisible="12"> 당신의 공간에서 보기 </button>
-      <div id="ar-prompt" _mstvisible="12">
-          <img src="ar_hand_prompt.png" _mstvisible="13">
+      <div class="btns">
+        <button id="btnReset">시점 초기화</button>
+        <button id="btnAuto">자동회전 ON</button>
+        <button id="btnAR">AR 안내</button>
       </div>
-    </model-viewer>  
-    <script src="script.js"></script>
-    <!-- Loads <model-viewer> for browsers: -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-  </body>
+    </header>
+
+    <div class="card viewer">
+      <div class="badge">GRINMAX</div>
+
+      <model-viewer id="mv"
+        src="sample_2.glb"
+        camera-controls
+        touch-action="pan-y"
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="neutral"
+        ar
+        ar-modes="webxr scene-viewer quick-look">
+      </model-viewer>
+
+      <div class="status" id="status">loading...</div>
+    </div>
+
+    <div class="foot">
+      쇼핑몰에는 아래처럼 iframe으로 넣으면 됩니다.<br/>
+      <code>&lt;iframe src="https://leeko0529.github.io/model-viewer/" style="width:100%;height:720px;border:0;border-radius:14px;"&gt;&lt;/iframe&gt;</code>
+    </div>
+  </div>
+
+  <script>
+    const mv = document.getElementById('mv');
+    const status = document.getElementById('status');
+    const btnReset = document.getElementById('btnReset');
+    const btnAuto = document.getElementById('btnAuto');
+    const btnAR = document.getElementById('btnAR');
+
+    let auto = false;
+
+    mv.addEventListener('load', () => status.textContent = 'loaded ✅');
+    mv.addEventListener('error', () => status.textContent = 'error ❌ (파일/경로 확인)');
+
+    btnReset.addEventListener('click', () => {
+      mv.cameraOrbit = '0deg 75deg 2.2m';
+      mv.cameraTarget = '0m 0m 0m';
+      mv.fieldOfView = '45deg';
+    });
+
+    btnAuto.addEventListener('click', () => {
+      auto = !auto;
+      mv.autoRotate = auto;
+      btnAuto.textContent = auto ? '자동회전 OFF' : '자동회전 ON';
+    });
+
+    btnAR.addEventListener('click', () => {
+      alert('모바일에서 AR 버튼(큐브 아이콘)이 보이면 눌러서 AR로 확인할 수 있어요.');
+    });
+
+    // 초기값 (원하면 여기서 바꿔)
+    mv.cameraOrbit = '0deg 75deg 2.2m';
+    mv.cameraTarget = '0m 0m 0m';
+    mv.fieldOfView = '45deg';
+  </script>
+</body>
 </html>
