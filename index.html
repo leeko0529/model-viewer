@@ -9,65 +9,113 @@
 
   <style>
     :root{
-      --bg:#0f1115;
-      --card:#1a1d24;
-      --line:rgba(255,255,255,.10);
-      --txt:rgba(255,255,255,.92);
-      --sub:rgba(255,255,255,.62);
-      --btn:#2a2f3b;
-      --btnOn:#3a4152;
-      --radius:14px;
+      --accent:#0078ff;
+
+      /* Neumorphism base */
+      --bg:#e6e9ef;
+      --card:#e6e9ef;
+      --txt:#1b2430;
+      --sub:#5d6b7a;
+
+      --shadow1: 14px 14px 28px rgba(154, 165, 182, .55);
+      --shadow2:-14px -14px 28px rgba(255, 255, 255, .85);
+
+      --shadowIn1: inset 10px 10px 18px rgba(154, 165, 182, .45);
+      --shadowIn2: inset -10px -10px 18px rgba(255, 255, 255, .85);
+
+      --radius:18px;
+      --radiusSm:14px;
     }
+
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;}
+
     .wrap{max-width:1100px;margin:0 auto;padding:18px;}
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      overflow:hidden;
-      box-shadow:0 10px 40px rgba(0,0,0,.35);
-    }
     header{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:12px;}
-    .title{font-size:16px;font-weight:700;letter-spacing:.2px}
+
+    .title{font-size:16px;font-weight:800;letter-spacing:.2px}
     .desc{font-size:12px;color:var(--sub);margin-top:4px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+    .btns{display:flex;gap:10px;flex-wrap:wrap}
     button{
-      border:1px solid var(--line);
-      background:var(--btn);
+      border:0;
+      background:var(--card);
       color:var(--txt);
-      padding:8px 10px;
-      border-radius:10px;
+      padding:10px 12px;
+      border-radius:999px;
       cursor:pointer;
       font-size:12px;
+      box-shadow: var(--shadow1), var(--shadow2);
+      transition: transform .08s ease, box-shadow .12s ease, color .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    button:hover{background:var(--btnOn)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px;border-bottom:1px solid var(--line);}
-    .hint{font-size:12px;color:var(--sub)}
-    .viewer{position:relative}
+    button:hover{transform: translateY(-1px)}
+    button:active{
+      transform: translateY(0);
+      box-shadow: var(--shadowIn1), var(--shadowIn2);
+    }
+    button.primary{
+      color:var(--accent);
+      font-weight:800;
+    }
+
+    .card{
+      position:relative;
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow1), var(--shadow2);
+      overflow:hidden;
+    }
+
+    .badge{
+      position:absolute;left:14px;top:14px;
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      color:var(--accent);
+      background:var(--card);
+      box-shadow: var(--shadow1), var(--shadow2);
+      letter-spacing:.3px;
+    }
+
     model-viewer{
       width:100%;
       height:min(72vh,720px);
-      background:radial-gradient(1200px 700px at 50% 30%, rgba(255,255,255,.07), rgba(255,255,255,0));
+      background:
+        radial-gradient(900px 520px at 50% 28%, rgba(0,120,255,.14), rgba(0,120,255,0) 55%),
+        radial-gradient(900px 600px at 50% 75%, rgba(0,0,0,.06), rgba(0,0,0,0) 55%);
     }
-    .badge{
-      position:absolute;left:12px;top:12px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.12);
-      color:rgba(255,255,255,.9);
-      padding:6px 10px;border-radius:999px;
-      font-size:12px;backdrop-filter: blur(6px);
-    }
+
     .status{
-      position:absolute;right:12px;bottom:12px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.12);
-      padding:6px 10px;border-radius:999px;
-      font-size:12px;color:rgba(255,255,255,.85);
-      backdrop-filter: blur(6px);
+      position:absolute;right:14px;bottom:14px;
+      display:flex;align-items:center;gap:8px;
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--sub);
+      background:var(--card);
+      box-shadow: var(--shadow1), var(--shadow2);
     }
-    .foot{padding:12px;font-size:12px;color:var(--sub)}
-    a{color:rgba(255,255,255,.85)}
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background:rgba(93,107,122,.45);
+    }
+    .dot.ok{background:var(--accent)}
+    .dot.err{background:#ff3b30}
+
+    .foot{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:var(--radiusSm);
+      background:var(--card);
+      box-shadow: var(--shadowIn1), var(--shadowIn2);
+      font-size:12px;
+      color:var(--sub);
+      overflow:auto;
+    }
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
   </style>
 </head>
 
@@ -79,17 +127,17 @@
         <div class="desc">드래그: 회전 · 휠/핀치: 확대 · 우클릭/두손: 이동</div>
       </div>
       <div class="btns">
-        <button id="btnReset">시점 초기화</button>
+        <button id="btnReset" class="primary">시점 초기화</button>
         <button id="btnAuto">자동회전 ON</button>
         <button id="btnAR">AR 안내</button>
       </div>
     </header>
 
-    <div class="card viewer">
+    <div class="card">
       <div class="badge">GRINMAX</div>
 
       <model-viewer id="mv"
-        src="sample_2.gltf"
+        src="Sample_2.glb"
         camera-controls
         touch-action="pan-y"
         shadow-intensity="1"
@@ -99,26 +147,40 @@
         ar-modes="webxr scene-viewer quick-look">
       </model-viewer>
 
-      <div class="status" id="status">loading...</div>
+      <div class="status" id="statusWrap">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">loading...</span>
+      </div>
     </div>
 
     <div class="foot">
-      쇼핑몰에는 아래처럼 iframe으로 넣으면 됩니다.<br/>
-      <code>&lt;iframe src="https://leeko0529.github.io/model-viewer/" style="width:100%;height:720px;border:0;border-radius:14px;"&gt;&lt;/iframe&gt;</code>
+      카페24에는 iframe 한 줄만 넣으면 됩니다.<br/>
+      <code>&lt;iframe src="https://leeko0529.github.io/model-viewer/" style="width:100%;height:720px;border:0;border-radius:18px;"&gt;&lt;/iframe&gt;</code>
     </div>
   </div>
 
   <script>
     const mv = document.getElementById('mv');
-    const status = document.getElementById('status');
     const btnReset = document.getElementById('btnReset');
     const btnAuto = document.getElementById('btnAuto');
     const btnAR = document.getElementById('btnAR');
 
+    const statusText = document.getElementById('statusText');
+    const statusDot = document.getElementById('statusDot');
+
     let auto = false;
 
-    mv.addEventListener('load', () => status.textContent = 'loaded ✅');
-    mv.addEventListener('error', () => status.textContent = 'error ❌ (파일/경로 확인)');
+    mv.addEventListener('load', () => {
+      statusText.textContent = 'loaded';
+      statusDot.classList.remove('err');
+      statusDot.classList.add('ok');
+    });
+
+    mv.addEventListener('error', () => {
+      statusText.textContent = 'error (파일/경로 확인)';
+      statusDot.classList.remove('ok');
+      statusDot.classList.add('err');
+    });
 
     btnReset.addEventListener('click', () => {
       mv.cameraOrbit = '0deg 75deg 2.2m';
@@ -136,7 +198,7 @@
       alert('모바일에서 AR 버튼(큐브 아이콘)이 보이면 눌러서 AR로 확인할 수 있어요.');
     });
 
-    // 초기값 (원하면 여기서 바꿔)
+    // 초기값
     mv.cameraOrbit = '0deg 75deg 2.2m';
     mv.cameraTarget = '0m 0m 0m';
     mv.fieldOfView = '45deg';
